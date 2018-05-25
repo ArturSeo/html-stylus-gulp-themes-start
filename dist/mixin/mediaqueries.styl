@@ -1,0 +1,55 @@
+// Определяем объект кеша и объект с алиасами
+$media_cache = {}
+
+$media_aliases = {
+	mn-w1921:  '(min-width: 1921px)',
+	mx-w1921:  '(max-width: 1920px) and (min-width: 1801px)',
+	mx-w1800:  '(max-width: 1800px) and (min-width: 1601px)',
+	mx-w1600:  '(max-width: 1600px) and (min-width: 1367px)',
+	mx-w1366:  '(max-width: 1366px) and (min-width: 1281px)',
+	mx-w1280:  '(max-width: 1280px) and (min-width: 1025px)',
+	mx-w1024:  '(max-width: 1024px) and (min-width: 901px)',
+	mx-w900:   '(max-width: 900px)  and (min-width: 721px)',
+	mx-w720:   '(max-width: 720px) and (min-width: 581px)',
+	mx-w580:   '(max-width: 580px) and (min-width: 321px)',
+	mx-w320:   '(max-width: 320px)'
+}
+
+// Миксин, кеширующий медиаквери
+media($condition)
+	helper($condition)
+		unless $media_cache[$condition]
+			$media_cache[$condition] = ()
+		push($media_cache[$condition], block)
+
+	+helper($condition)
+		{selector() + ''}
+			{block}
+
+	// $condition = arguments if length(arguments) > 1
+	// for $cond in $condition
+	// 	$cond
+
+// Функция, вызывающая закешированные медиаквери
+apply_media_cache()
+	for $media, $blocks in $media_cache
+		$media = unquote($media_aliases[$media] || $media)
+		$media = '(%s)' % $media unless match('\(', $media)
+		$media = 'only screen and %s' % $media
+		@media $media
+			for $block in $blocks
+				{$block}
+
+// Здесь будет основной код с вызовами миксина
+
+	// +media("xxlg")
+	// +media("xlg")
+	// +media("lgg")
+	// +media("lg")
+	// +media("m")
+	// +media("s")
+	// +media("xs")
+	// +media("xss")
+	// +media("xxs")
+	// +media("xxss")
+	// +media("xxxs")
